@@ -36,8 +36,8 @@ services:
       - /etc/localtime:/etc/localtime
     
   php:
-    image: guoshikeji/php7.3.4-fpm
-    container_name: php7.3.4-fpm
+    image: guoshi/7.3.10-fpm
+    container_name: php7.3.10-fpm
     restart: always
     networks:
       - guoshi_net
