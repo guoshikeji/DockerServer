@@ -1,0 +1,149 @@
+version: '3.1'
+services:
+  db:
+    image: mysql:8.0.17
+    container_name: mysql8
+    restart: always
+    networks:
+      - guoshi_net
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: Guoshikeji123
+    command:
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=1
+      --max_allowed_packet=128M;
+    ports:
+      - 3316:3306
+    volumes:
+      - /opt/chuxingjia/mysqldata:/var/lib/mysql
+
+  postgre:
+    image: timescale/timescaledb-postgis:latest-pg11
+    container_name: timescaledb-postgis
+    restart: always
+    networks:
+      - guoshi_net
+    environment:
+      POSTGRES_PASSWORD: Guoshikeji123
+    ports:
+      - 5432:5432
+    volumes:
+      -  /opt/chuxingjia/postgresqldata:/var/lib/postgresql/data
+      - /etc/localtime:/etc/localtime
+    
+  php:
+    image: guoshikeji/php7.3.4-fpm
+    container_name: php7.3.4-fpm
+    restart: always
+    networks:
+      - guoshi_net
+    ports:
+      - 9999:9000
+    volumes:
+      - /opt/chuxingjia/php/html:/var/www
+      - /opt/chuxingjia/php/html/public:/var/www/html
+  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    networks:
+      - guoshi_net
+    ports:
+      - 10100:80
+    environment:
+      - PMA_ARBITRARY=1
+    volumes:
+      - /etc/localtime:/etc/localtime
+
+  pgadmin4:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    restart: always
+    networks:
+      - guoshi_net
+    environment:
+      PGADMIN_DEFAULT_EMAIL: tanyin@55rd.com
+      PGADMIN_DEFAULT_PASSWORD: Guoshikeji123@
+    ports:
+      - 10101:80
+    volumes:
+      - /etc/localtime:/etc/localtime
+ 
+  rabbitmq:
+    image: rabbitmq
+    container_name: rabbitmq
+    restart: always
+    networks:
+      - guoshi_net
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=Guoshikeji123
+    restart: always
+    ports:
+      - 15672:15672
+      - 5672:5672
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    volumes:
+      - /etc/localtime:/etc/localtime
+
+  redis:
+    image: redis
+    container_name: redis
+    restart: always
+    networks:
+      - guoshi_net
+    environment:
+      TZ: Asia/Shanghai
+    command: redis-server --requirepass Guoshikeji123
+    ports:
+      -  6379:6379
+    volumes:
+      - /opt/chuxingjia/redis/data:/data
+  
+  mqtt:
+    image: eclipse-mosquitto:1.6.7
+    container_name: mqtt
+    restart: always
+    networks:
+      - guoshi_net
+    ports:
+      -  1883:1883
+      -  9001:9001
+    volumes:
+      - /etc/localtime:/etc/localtime
+    
+  tomcatapi:
+    image: tomcat:latest
+    container_name: tomcatapi
+    restart: always
+    networks:
+      - guoshi_net
+    ports:
+      - 8181:8080
+    volumes:
+      - /opt/chuxingjia/tomcatapi:/usr/local/tomcat/webapps
+      - /etc/localtime:/etc/localtime
+
+  tomcatadmin:
+    image: tomcat:latest
+    container_name: tomcatadmin
+    restart: always
+    networks:
+      - guoshi_net
+    ports:
+      - 8182:8080
+    volumes:
+      - /opt/chuxingjia/tomcatadmin:/usr/local/tomcat/webapps
+      - /etc/localtime:/etc/localtime
+
+networks:
+  guoshi_net:
