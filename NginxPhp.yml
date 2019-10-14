@@ -1,0 +1,48 @@
+version: '3.1'
+services:
+
+  nginx:
+    image: guoshi/wafnginx
+    sysctls:
+      net.core.somaxconn: 102400
+    #build: ./VeryNginx
+    container_name: guoshi_nginx
+    restart: always
+    networks:
+      - guoshi_net
+    ports:
+      - 1080:80
+      - 1443:443
+    volumes: 
+      - /opt/chuxingjia/nginx_conf/nginx.conf:/opt/verynginx/openresty/nginx/conf/nginx.conf
+      - /opt/chuxingjia/nginx_ssl:/opt/verynginx/verynginx/nginx_ssl/
+      - /opt/chuxingjia/phphtml:/var/www
+      - /opt/chuxingjia/phphtml/public:/var/www/html
+    
+
+  phpapache:
+    image: guoshi/7.3.10-apache
+    container_name: guoshi_php_apache
+    restart: always
+    networks:
+      - guoshi_net
+    ports:
+      - 1088:80
+    volumes:
+      - /opt/chuxingjia/phphtml:/var/www
+      - /opt/chuxingjia/phphtml/public:/var/www/html
+
+  phpfpm:
+    image: guoshi/7.3.10-fpm
+    container_name: guoshi_php_fpm
+    restart: always
+    networks:
+      - guoshi_net
+    ports:
+      - 9999:9000
+    volumes:
+      - /opt/chuxingjia/phphtml:/var/www
+      - /opt/chuxingjia/phphtml/public:/var/www/html
+
+networks:
+  guoshi_net:

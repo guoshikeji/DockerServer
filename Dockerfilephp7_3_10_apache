@@ -1,8 +1,0 @@
-FROM php:7.3.10-apache
-RUN  apt-get update
-RUN  apt-get install -y vim git zip unzip libzip-dev libpq-dev libfreetype6-dev  libxml2-dev wget   librabbitmq-dev libssh-dev
-RUN  docker-php-ext-install pdo pdo_mysql pdo_pgsql bcmath  gd sockets zip
-RUN  pecl install redis amqp && docker-php-ext-enable redis zip pdo pdo_mysql amqp
-RUN  cd /var/www  && wget https://file.96568.net.cn/apk-driver/composer.phar && chmod +x composer.phar
-RUN  ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-RUN  echo 'Asia/Shanghai' >/etc/timezone

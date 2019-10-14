@@ -1,14 +1,31 @@
 version: '3.1'
 services:
-  db:
+
+  nginx:
+    image: guoshi/wafnginx
+    #build: ./VeryNginx
+    container_name: guoshi_nginx
+    restart: always
+    networks:
+      - guoshi_net
+    ports:
+      - 1080:80
+      - 1443:443
+    volumes: 
+      - /opt/chuxingjia/nginx_conf/nginx.conf:/opt/verynginx/openresty/nginx/conf/nginx.conf
+      - /opt/chuxingjia/nginx_ssl:/opt/verynginx/verynginx/nginx_ssl/
+      - /opt/chuxingjia/phphtml:/var/www
+      - /opt/chuxingjia/phphtml/public:/var/www/html
+
+  mysql_db:
     image: mysql:8.0.17
-    container_name: mysql8
+    container_name: guoshi_mysql8
     restart: always
     networks:
       - guoshi_net
     environment:
       TZ: Asia/Shanghai
-      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_ROOT_PASSWORD: Guoshikeji123
     command:
       --default-authentication-plugin=mysql_native_password
       --character-set-server=utf8mb4
@@ -21,35 +38,47 @@ services:
     volumes:
       - /opt/chuxingjia/mysqldata:/var/lib/mysql
 
-  postgre:
+  timescaledb_postgre:
     image: timescale/timescaledb-postgis:latest-pg11
-    container_name: timescaledb-postgis
+    container_name: guoshi_timescaledb
     restart: always
     networks:
       - guoshi_net
     environment:
-      POSTGRES_PASSWORD: 123456
+      POSTGRES_PASSWORD: Guoshikeji123
     ports:
       - 5432:5432
     volumes:
       -  /opt/chuxingjia/postgresqldata:/var/lib/postgresql/data
       - /etc/localtime:/etc/localtime
-    
-  php:
+
+  phpapache:
+    image: guoshi/7.3.10-apache
+    container_name: guoshi_php_apache
+    restart: always
+    networks:
+      - guoshi_net
+    ports:
+      - 1088:80
+    volumes:
+      - /opt/chuxingjia/phphtml:/var/www
+      - /opt/chuxingjia/phphtml/public:/var/www/html
+
+  phpfpm:
     image: guoshi/7.3.10-fpm
-    container_name: php7.3.10-fpm
+    container_name: guoshi_php_fpm
     restart: always
     networks:
       - guoshi_net
     ports:
       - 9999:9000
     volumes:
-      - /opt/chuxingjia/php/html:/var/www
-      - /opt/chuxingjia/php/html/public:/var/www/html
-  
+      - /opt/chuxingjia/phphtml:/var/www
+      - /opt/chuxingjia/phphtml/public:/var/www/html
+
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
+    container_name: guoshi_phpmyadmin
     restart: always
     networks:
       - guoshi_net
@@ -62,31 +91,34 @@ services:
 
   pgadmin4:
     image: dpage/pgadmin4
-    container_name: pgadmin4
+    container_name: guoshi_pgadmin4
     restart: always
     networks:
       - guoshi_net
     environment:
       PGADMIN_DEFAULT_EMAIL: tanyin@55rd.com
-      PGADMIN_DEFAULT_PASSWORD: 123456
+      PGADMIN_DEFAULT_PASSWORD: Guoshikeji123
     ports:
       - 10101:80
     volumes:
       - /etc/localtime:/etc/localtime
- 
+
   rabbitmq:
     image: rabbitmq
-    container_name: rabbitmq
+    container_name: guoshi_rabbitmq
     restart: always
     networks:
       - guoshi_net
     environment:
       - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=123456
+      - RABBITMQ_DEFAULT_PASS=Guoshikeji123
     restart: always
     ports:
+      - 25672:25672
       - 15672:15672
       - 5672:5672
+      - 5671:5671
+      - 4369:4369
     logging:
       driver: "json-file"
       options:
@@ -97,21 +129,36 @@ services:
 
   redis:
     image: redis
-    container_name: redis
+    container_name: guoshi_redis
     restart: always
     networks:
       - guoshi_net
     environment:
       TZ: Asia/Shanghai
-    command: redis-server --requirepass 123456
+    command: redis-server --requirepass Guoshikeji123
     ports:
       -  6379:6379
     volumes:
       - /opt/chuxingjia/redis/data:/data
   
+  phpredisadmin:
+    image: erikdubbelboer/phpredisadmin:latest
+    ports:
+      - 6380:80
+    networks:
+      - guoshi_net
+    environment:
+      - REDIS_1_HOST=guoshi_redis
+      - REDIS_1_PORT=6379
+      - REDIS_1_AUTH=Guoshikeji123
+      - ADMIN_USER=tanyin@55rd.com
+      - ADMIN_PASS=Guoshikeji123
+    volumes:
+      - /etc/localtime:/etc/localtime
+
   mqtt:
     image: eclipse-mosquitto:1.6.7
-    container_name: mqtt
+    container_name: guoshi_mqtt
     restart: always
     networks:
       - guoshi_net
@@ -120,10 +167,10 @@ services:
       -  9001:9001
     volumes:
       - /etc/localtime:/etc/localtime
-    
+
   tomcatapi:
     image: tomcat:latest
-    container_name: tomcatapi
+    container_name: guoshi_tomcatapi
     restart: always
     networks:
       - guoshi_net
@@ -135,7 +182,7 @@ services:
 
   tomcatadmin:
     image: tomcat:latest
-    container_name: tomcatadmin
+    container_name: guoshi_tomcatadmin
     restart: always
     networks:
       - guoshi_net
