@@ -25,7 +25,7 @@ services:
       - guoshi_net
     environment:
       TZ: Asia/Shanghai
-      MYSQL_ROOT_PASSWORD: Guoshikeji123
+      MYSQL_ROOT_PASSWORD: 11111111
     command:
       --default-authentication-plugin=mysql_native_password
       --character-set-server=utf8mb4
@@ -45,7 +45,7 @@ services:
     networks:
       - guoshi_net
     environment:
-      POSTGRES_PASSWORD: Guoshikeji123
+      POSTGRES_PASSWORD: 11111111
     ports:
       - 5432:5432
     volumes:
@@ -97,7 +97,7 @@ services:
       - guoshi_net
     environment:
       PGADMIN_DEFAULT_EMAIL: tanyin@55rd.com
-      PGADMIN_DEFAULT_PASSWORD: Guoshikeji123
+      PGADMIN_DEFAULT_PASSWORD: 11111111
     ports:
       - 10101:80
     volumes:
@@ -111,7 +111,7 @@ services:
       - guoshi_net
     environment:
       - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=Guoshikeji123
+      - RABBITMQ_DEFAULT_PASS=11111111
     restart: always
     ports:
       - 25672:25672
@@ -135,7 +135,7 @@ services:
       - guoshi_net
     environment:
       TZ: Asia/Shanghai
-    command: redis-server --requirepass Guoshikeji123
+    command: redis-server --requirepass 11111111
     ports:
       -  6379:6379
     volumes:
@@ -150,9 +150,9 @@ services:
     environment:
       - REDIS_1_HOST=guoshi_redis
       - REDIS_1_PORT=6379
-      - REDIS_1_AUTH=Guoshikeji123
+      - REDIS_1_AUTH=11111111
       - ADMIN_USER=tanyin@55rd.com
-      - ADMIN_PASS=Guoshikeji123
+      - ADMIN_PASS=11111111
     volumes:
       - /etc/localtime:/etc/localtime
 
